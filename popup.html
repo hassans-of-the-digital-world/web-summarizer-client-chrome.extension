@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Main</title>
+    <style>
+      body {
+        overflow: hidden;
+        margin: 0px;
+        padding: 0px;
+        background: white;
+      }
+
+      div:first-child {
+        margin-top: 0px;
+      }
+
+      div {
+        cursor: pointer;
+        text-align: center;
+        line-height: 50px;
+        padding: 1px 3px;
+        font-family: sans-serif;
+        font-size: 1.2em;
+        width: 200px;
+        height: 60px;
+        margin-top: 1px;
+        background: #cccccc;
+      }
+      div:hover {
+        background: #aaaaaa;
+      }
+      #Summery {
+        border: 1px solid red;
+        color: red;
+      }
+      #History {
+        border: 1px solid blue;
+        color: blue;
+      }
+      #Bookmark {
+        border: 1px solid green;
+        color: green;
+      }
+    </style>
+    <script src="popup.js"></script>
+    <meta charset="utf-8"/>
+  </head>
+  <body>
+    <div id="Summery">요약하기</div>
+    <div id="History">요약했던 히스토리</div>
+    <div id="Bookmark">북마크 카테고리 분류</div>
+  </body>
+</html>
