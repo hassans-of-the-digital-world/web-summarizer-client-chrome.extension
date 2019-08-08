@@ -1,28 +1,33 @@
-// Copyright (c) 2012 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
 
-'use strict';
+$(function(){
 
-/*
-function click(e) {
-  chrome.tabs.executeScript(null,
-      {code:"document.body.style.backgroundColor='" + e.target.id + "'"});
-  window.close();
-}
-*/
+  $("div#btn-summary").click(function() {
+    
+    // Extract html tags of current page
+    chrome.tabs.query({
+      active: true,
+      currentWindow: true
+    }, function(tabs) {
+      var tab_url = tabs[0].url;
+      $.ajax({
+          type: "POST",
+          url: "http://202.30.23.211:8000/article/summarize/",
+          data: {"url" : tab_url},
+          dataType : "json",
+          success : function() {
 
-function click(e) {
-  alert(e.target.id);
+          }
 
-  chrome.tabs.executeScript(null,
-      {code:"document.body.style.backgroundColor='red'"});
-  window.close();
-}
+      });
+    });
+    
+  });
 
-document.addEventListener('DOMContentLoaded', function () {
-  var divs = document.querySelectorAll('div');
-  for (var i = 0; i < divs.length; i++) {
-    divs[i].addEventListener('click', click);
+  function handleContent(results) {
+    console.log(results);
   }
-});
+
+  $("#btn-history").click(function() {
+
+  });
+})
