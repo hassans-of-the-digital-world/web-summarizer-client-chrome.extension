@@ -1,16 +1,135 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Main</title>
-    <meta charset="utf-8"/>
+<!DOCTYPE html>
+<html ng-app="popupApp" ng-csp>
 
-    <link rel="stylesheet" href="style.css"/>
-    <script type="text/javascript" src="jquery-3.4.1.js"></script>
-    <script type="text/javascript" src="popup.js"></script>
-    
-  </head>
-  <body>
-    <div id="btn-summary" class="btn">Summary</div>
-    <div id="btn-history" class="btn">History</div>
-  </body>
+<head lang="en">
+    <meta charset="utf-8">
+    <link href="static/css/angular-csp.css" rel="stylesheet">
+    <link href="static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/popup.css" rel="stylesheet">
+
+    <script src="static/js/jquery-2.1.1.min.js"></script>
+    <script src="static/js/jquery.stylesheet.min.js"></script>
+    <script src="static/js/angular.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+    <script src="static/js/purl.min.js"></script>
+
+    <script src="js/storage.js"></script>
+    <script src="js/stylesheet.js"></script>
+
+    <script src="js/popup/app.js"></script>
+    <script src="js/popup/controllers.js"></script>
+    <script src="js/i18n_filters.js"></script>
+
+</head>
+
+<body>
+    <div class="container" ng-controller="DocumentsController">
+        <!--Top (not nav) http://stackoverflow.com/questions/20547819/vertical-align-with-bootstrap-3-->
+        <!--Header-->
+        <div class="row">
+            <div class="col-xs-8 vcenter" style="margin: 10px 0">
+                <h5 class="title">
+                    <span>{{manifest.name}}</span>
+                </h5>
+
+                <!-- <span class="badge">{{docs.length}}</span> -->
+                <div class="dropdown" style="display: inline">
+                    <a href="" class="dropdown-toggle caret" id="dropdownMenu1" data-toggle="dropdown"></a>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="" ng-click="onClickOpenOverviewInNewTab()">
+                                <span class="glyphicon glyphicon-list"></span>
+                                {{'open_overview_in_new_tab' | i18n}}
+                            </a>
+                        </li>
+
+                        <li role="presentation" class="divider"></li>
+
+                        <li role="presentation">
+                            <a href="" role="menuitem" tabindex="-1" data-toggle="modal"
+                                data-target=".bs-example-modal-sm">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                <span class="text-danger">{{'remove_all_highlights' | i18n}}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Search -->
+            <div class="col-xs-4 vcenter">
+                <input type="search" class="form-control input-sm search" ng-model="search.text" placeholder="{{'placeholder_filter' | i18n}}">
+            </div>
+        </div>
+
+        <!--List-->
+        <ul class="list-unstyled">
+            <!--http://stackoverflow.com/questions/13813254/how-do-i-conditionally-apply-css-styles-in-angularjs-->
+            <!--isInDOM defaults to undefined-->
+            <li ng-repeat="doc in docs | filter:search" id="{{doc._id}}" class="doc"
+                ng-class="{'not-in-dom': doc.isInDOM === false}" ng-mouseenter="doc.hover=true"
+                ng-mouseleave="doc.hover=false">
+
+                <!-- Original Text -->
+                <div class="highlight {{doc.className}} highlight-text-container pointer"
+                    ng-click="onClickHighlight(doc)">
+
+                    <!--Delete Button-->
+                    <button type="button" class="close" title="Remove Highlight"
+                        ng-click="onClickRemoveHighlight(doc._id); $event.preventDefault(); $event.stopPropagation();">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only"> {{ 'close' | i18n }}</span>
+                    </button>
+
+                    <!--text-->
+                    <span class="highlight-text">{{doc.text.substring(0, popupHighlightTextMaxLength)}}<span
+                            ng-show="doc.text.length > popupHighlightTextMaxLength">&#8230;
+                            <a href="" class="more"
+                                data-ng-click="onClickMore(doc); $event.preventDefault(); $event.stopPropagation()">
+                                {{ 'more' | i18n }}
+                            </a>
+                        </span>
+                    </span>
+
+                </div>
+
+                <!-- Summarized Text -->
+                <div class="highlight  highlight-text-container pointer"
+                    ng-click="onClickHighlight(doc)" style="margin-top:10px;">
+
+                    <!--text-->
+                    <span class="highlight-text highlight-summarized">{{doc.summarized.substring(0, popupHighlightTextMaxLength)}}<span
+                            ng-show="doc.text.length > popupHighlightTextMaxLength">&#8230;
+                            <a href="" class="more"
+                                data-ng-click="onClickMoreSummarized(doc); $event.preventDefault(); $event.stopPropagation()">
+                                {{ 'more' | i18n }}
+                            </a>
+                        </span>
+                    </span>
+                </div>
+
+                <!--InfoBar-->
+                <div class="actions">
+                    <span class="date">{{ doc.date | date:'medium' }}</span>
+
+                    <!--Only show these if hovering-->
+                    <span ng-show="doc.hover">
+                        <!--Copy-->
+                        <a href="" ng-click="onClickCopy(doc._id)" title="{{ 'tooltip_copy_highlight' | i18n }}">
+                            {{'copy_highlight_text' | i18n}}
+                        </a>
+                        <span class="separator">&nbsp;//&nbsp;</span>
+
+                        <!--Select-->
+                        <a href="" ng-click="onClickSelect(doc)" title="{{ 'tooltip_select_highlight' | i18n }}"
+                            class="select">
+                            {{'select_highlight_text' | i18n}}
+                        </a>
+                    </span>
+                </div> <!--InfoBar-->
+
+            </li>
+        </ul>
+    </div>
+</body>
+
 </html>
